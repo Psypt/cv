@@ -162,25 +162,10 @@
       if(n<1) n=1; if(n>12) n=12;
       selectedDay = n;
       document.querySelectorAll('.day').forEach(d => d.classList.toggle('selected', Number(d.dataset.day)===n));
-      const el = document.querySelector(`.day[data-day="${n}"]`);
-      if(el) el.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});
-      loadDay(n);
-    }
-
-    function prevDay(){ selectDay(selectedDay-1); }
-    function nextDay(){ selectDay(selectedDay+1); }
-
-    function markDayIndicators(){
-      const store = getStore();
-      document.querySelectorAll('.day').forEach(d => {
-        const n = d.dataset.day;
-        const taken = store[n] && Object.values(store[n]).some(v => v);
-        d.classList.toggle('has', !!taken);
-      });
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      buildKesiumDays();
+      // save to localStorage only
+      setStore(store);
+      statusEl.textContent = `Estado: guardado (Dia ${selectedDay})`;
+      markDayIndicators();
       // convert existing inputs to use data-med names (backwards-safe)
       document.querySelectorAll('input[name]').forEach(inp => {
         inp.dataset.med = inp.name;
@@ -193,32 +178,14 @@
       document.getElementById('next').addEventListener('click', nextDay);
 
 
-      // try to load state from server; fallback to localStorage
-      async function tryLoadServer(){
-        try{
-          const res = await fetch('state.php');
-          if(!res.ok) return;
-          const obj = await res.json();
-          if(obj && typeof obj === 'object'){
-            setStore(obj);
-            statusEl.textContent = 'Estado: carregado do servidor';
-          }
-        }catch(err){
-          console.warn('server load failed', err);
-        }
-      }
-
       // keyboard navigation (left/right)
       document.addEventListener('keydown', e => {
         if(e.key === 'ArrowLeft') prevDay();
         if(e.key === 'ArrowRight') nextDay();
       });
-
-      // try server load then select day
-      tryLoadServer().then(() => {
-        selectDay(1);
-        markDayIndicators();
-      });
+      // select first day by default and load from localStorage
+      selectDay(1);
+      markDayIndicators();
     });
     </script>
 </body>
