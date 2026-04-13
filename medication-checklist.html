@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Checklist diária de medicação</title>
+  <style>
+    body{font-family: system-ui,Segoe UI,Roboto,Arial;background:#f7fafc;color:#0f172a;padding:20px}
+    .card{background:#fff;border-radius:8px;padding:18px;max-width:760px;margin:0 auto;box-shadow:0 6px 18px rgba(2,6,23,0.08)}
+    h1{margin:0 0 12px;font-size:20px}
+    section{margin:12px 0;padding-top:8px;border-top:1px solid #eef2f7}
+    .row{display:flex;align-items:center;gap:12px;margin:6px 0}
+    label{display:flex;align-items:center;gap:8px}
+    .time{font-weight:600;color:#334155;min-width:110px}
+    .actions{display:flex;gap:8px;margin-top:12px}
+    button{padding:8px 12px;border-radius:6px;border:1px solid #cbd5e1;background:#fff;cursor:pointer}
+    button.primary{background:#0369a1;color:#fff;border-color:transparent}
+    .days{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+    .day{width:60px;padding:8px;border:1px solid #e6eef6;border-radius:6px;text-align:center;background:#f8fafc;cursor:pointer}
+    .day.selected{background:#0369a1;color:#fff;border-color:#0369a1}
+    .day.has{box-shadow:inset 0 -4px 0 0 #06b6d4}
+    footer{margin-top:12px;font-size:13px;color:#475569}
+    .small{font-size:13px;color:#64748b}
+    input[type=file]{display:none}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>✅ Checklist diária de medicação</h1>
+
+    <section>
+      <div class="row">
+        <div class="time">🌅 Manhã (jejum)</div>
+        <label><input type="checkbox" name="omep-0800-morning"> Omeprazol 10 mg — 1 comprimido (08:00)</label>
+      </div>
+    </section>
+
+    <section>
+      <div class="row">
+        <div class="time">🍽️ Pequeno-almoço</div>
+        <label><input type="checkbox" name="prednicortone-breakfast"> Prednicortone 20 mg — 1 comprimido</label>
+      </div>
+      <div class="row">
+        <div class="time"></div>
+        <label><input type="checkbox" name="kesium-breakfast"> Kesium 500/125 mg — 1/2 comprimido</label>
+      </div>
+    </section>
+
+    <section>
+      <div class="row">
+        <div class="time">🍽️ Jantar (20:00)</div>
+        <label><input type="checkbox" name="kesium-dinner"> Kesium 500/125 mg — 1/2 comprimido</label>
+      </div>
+    </section>
+
+    <section>
+      <div class="row">
+        <div class="time">🌙 Noite (22:00)</div>
+        <label><input type="checkbox" name="omep-2200-night"> Omeprazol 10 mg — 1 comprimido</label>
+      </div>
+      <div class="row">
+        <div class="time">🌙 Antes de dormir (23:00)</div>
+        <label><input type="checkbox" name="enteroimmune-bed"> Enteroimmune 1 g — 1 comprimido e meio</label>
+      </div>
+      <div class="row">
+        <div class="time"></div>
+        <label><input type="checkbox" name="primperan-bed"> Primperan 10 mg — 1/2 comprimido</label>
+      </div>
+    </section>
+
+    <section>
+      <div class="row"><div class="time">📅 Controlo dos dias</div><div class="small">(Kesium – 12 dias)</div></div>
+      <div class="days" id="kesium-days">
+        <!-- days populated by JS -->
+      </div>
+    </section>
+
+    <div class="actions">
+      <button id="prev">Anterior</button>
+      <button id="next">Próximo</button>
+      <button id="clear">Limpar (dia selecionado)</button>
+    </div>
+
+    <footer>
+      <div id="status">Estado: não guardado</div>
+    </footer>
+  </div>
+
+    <script>
+    const STORAGE_KEY = 'medication-checklist-v1';
+    const statusEl = document.getElementById('status');
+    let selectedDay = 1;
+
+    function allCheckboxes(){
+      return Array.from(document.querySelectorAll('input[data-med]'));
+    }
+
+    function getStore(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    }
+
+    function setStore(obj){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+    }
+
+    function save(){
+      const store = getStore();
+      const data = {};
+      allCheckboxes().forEach(cb => data[cb.dataset.med] = cb.checked);
+      store[selectedDay] = data;
+      // try to save to server; on failure fallback to localStorage
+      fetch('state.php', {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(store)
+      }).then(resp => {
+        if(resp.ok){
+          statusEl.textContent = `Estado: guardado no servidor (Dia ${selectedDay})`;
+        }else{
+          setStore(store);
+          statusEl.textContent = `Estado: guardado local (Dia ${selectedDay})`;
+        }
+        markDayIndicators();
+      }).catch(err => {
+        console.warn('save to server failed', err);
+        setStore(store);
+        statusEl.textContent = `Estado: guardado local (Dia ${selectedDay})`;
+        markDayIndicators();
+      });
+    }
+
+    function loadDay(day){
+      const store = getStore();
+      const data = store[day] || {};
+      allCheckboxes().forEach(cb => cb.checked = !!data[cb.dataset.med]);
+      statusEl.textContent = Object.keys(data).length ? `Estado: carregado (Dia ${day})` : `Estado: vazio (Dia ${day})`;
+    }
+
+    function clearCurrentDay(){
+      if(!confirm(`Limpar marcações do Dia ${selectedDay}?`)) return;
+      const store = getStore();
+      delete store[selectedDay];
+      setStore(store);
+      loadDay(selectedDay);
+      markDayIndicators();
+    }
+
+    function buildKesiumDays(){
+      const container = document.getElementById('kesium-days');
+      for(let i=1;i<=12;i++){
+        const div = document.createElement('div');
+        div.className = 'day';
+        div.dataset.day = i;
+        div.innerHTML = `<div>Dia ${i}</div>`;
+        div.addEventListener('click', () => selectDay(i));
+        container.appendChild(div);
+      }
+    }
+
+    function selectDay(n){
+      if(n<1) n=1; if(n>12) n=12;
+      selectedDay = n;
+      document.querySelectorAll('.day').forEach(d => d.classList.toggle('selected', Number(d.dataset.day)===n));
+      const el = document.querySelector(`.day[data-day="${n}"]`);
+      if(el) el.scrollIntoView({behavior:'smooth',block:'center',inline:'center'});
+      loadDay(n);
+    }
+
+    function prevDay(){ selectDay(selectedDay-1); }
+    function nextDay(){ selectDay(selectedDay+1); }
+
+    function markDayIndicators(){
+      const store = getStore();
+      document.querySelectorAll('.day').forEach(d => {
+        const n = d.dataset.day;
+        const taken = store[n] && Object.values(store[n]).some(v => v);
+        d.classList.toggle('has', !!taken);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      buildKesiumDays();
+      // convert existing inputs to use data-med names (backwards-safe)
+      document.querySelectorAll('input[name]').forEach(inp => {
+        inp.dataset.med = inp.name;
+      });
+      // wire change -> save
+      allCheckboxes().forEach(cb => cb.addEventListener('change', save));
+
+      document.getElementById('clear').addEventListener('click', clearCurrentDay);
+      document.getElementById('prev').addEventListener('click', prevDay);
+      document.getElementById('next').addEventListener('click', nextDay);
+
+
+      // try to load state from server; fallback to localStorage
+      async function tryLoadServer(){
+        try{
+          const res = await fetch('state.php');
+          if(!res.ok) return;
+          const obj = await res.json();
+          if(obj && typeof obj === 'object'){
+            setStore(obj);
+            statusEl.textContent = 'Estado: carregado do servidor';
+          }
+        }catch(err){
+          console.warn('server load failed', err);
+        }
+      }
+
+      // keyboard navigation (left/right)
+      document.addEventListener('keydown', e => {
+        if(e.key === 'ArrowLeft') prevDay();
+        if(e.key === 'ArrowRight') nextDay();
+      });
+
+      // try server load then select day
+      tryLoadServer().then(() => {
+        selectDay(1);
+        markDayIndicators();
+      });
+    });
+    </script>
+</body>
+</html>
