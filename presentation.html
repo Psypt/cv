@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tech in the news - AI Existential Risk IPO Strategy</title>
+<style>
+  :root {
+    --blue: #192AEA;   /* Azul Explorer */
+    --black: #101820;  /* Preto */
+    --white: #FFFFFF;  /* Branco */
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--black); font-family: "Montserrat", "Segoe UI", Helvetica, Arial, sans-serif; color: var(--black); overflow: hidden; }
+  .deck { position: relative; width: 100vw; height: 100vh; }
+  .slide {
+    position: absolute; inset: 0; display: none; padding: 7vh 8vw 10vh;
+    background: var(--white); flex-direction: column; justify-content: center; overflow: hidden;
+  }
+  .slide.active { display: flex; animation: fade .4s ease; }
+  @keyframes fade { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: none; } }
+
+  /* geometric triangle motif from the logomark */
+  .tri { position: absolute; right: 0; bottom: 0; width: 28vw; height: 28vw; background: var(--blue);
+         clip-path: polygon(100% 0, 100% 100%, 0 100%); opacity: .95; }
+  .tri.small { width: 18vw; height: 18vw; background: var(--black); right: 0; bottom: 0; }
+  .tri.mid { width: 10vw; height: 10vw; background: var(--white); }
+  .dark { background: var(--blue); color: var(--white); }
+  .dark .tri { background: var(--black); }
+  .dark .tri.small { background: var(--white); opacity: .9; }
+  .dark .tri.mid { background: var(--blue); }
+
+  .logo { position: absolute; top: 4vh; left: 4vw; height: 11vh; }
+  .logo-box { position: absolute; top: 3vh; left: 3vw; background: var(--white); padding: 1vh 1.5vw; }
+  .logo-box img { height: 9vh; display: block; }
+
+  .kicker { text-transform: uppercase; letter-spacing: .25em; font-weight: 700; font-size: 1.6vh; color: var(--blue); margin-bottom: 2vh; }
+  .dark .kicker { color: var(--white); opacity: .8; }
+  h1 { font-size: 7vh; line-height: 1.1; font-weight: 800; max-width: 60vw; text-transform: uppercase; }
+  h2 { font-size: 5vh; font-weight: 800; color: var(--blue); margin-bottom: 4vh; text-transform: uppercase; }
+  h3 { font-size: 2.6vh; font-weight: 700; color: var(--blue); margin: 2.6vh 0 .8vh; text-transform: uppercase; letter-spacing: .06em; }
+  p, li { font-size: 2.6vh; line-height: 1.5; }
+  .author { margin-top: 5vh; font-size: 3vh; font-weight: 600; border-left: .8vh solid var(--white); padding-left: 1.5vw; }
+  .company { font-size: 14vh; font-weight: 800; text-transform: uppercase; color: var(--blue); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2vh 4vw; max-width: 80vw; }
+  .card { border-left: .8vh solid var(--blue); padding: .5vh 0 .5vh 1.5vw; }
+  .card.full { grid-column: 1 / -1; }
+  .card, .step { transition: opacity .4s ease, transform .4s ease; }
+  .card.hidden, .step.hidden { opacity: 0; transform: translateY(2vh); }
+  blockquote { font-size: 3.6vh; font-weight: 700; line-height: 1.35; background: var(--blue); color: var(--white); padding: 4vh 3vw; max-width: 70vw; margin-bottom: 3vh; }
+  .source { font-size: 1.5vh; opacity: .7; margin-top: 3vh; word-break: break-all; max-width: 60vw; }
+  .source a { color: inherit; }
+  .big-question { font-size: 8vh; font-weight: 800; line-height: 1.15; max-width: 70vw; text-transform: uppercase; }
+  .footer { position: absolute; bottom: 3vh; left: 4vw; font-size: 1.5vh; letter-spacing: .15em; text-transform: uppercase; opacity: .6; z-index: 2; }
+  .counter { position: absolute; bottom: 3vh; right: 3vw; font-size: 1.8vh; font-weight: 700; z-index: 2; color: var(--white); }
+  .nav { position: fixed; bottom: 2vh; left: 50%; transform: translateX(-50%); display: flex; gap: 1vw; z-index: 10; }
+  .nav button { background: var(--black); color: var(--white); border: 2px solid var(--white); padding: .6vh 1.2vw; font-weight: 700; cursor: pointer; font-size: 1.6vh; }
+  .nav button:hover { background: var(--blue); }
+  .slide > *:not(.tri):not(.logo-box):not(.footer) { position: relative; z-index: 1; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- Slide 1 -->
+  <section class="slide dark active">
+    <div class="tri"></div><div class="tri small"></div><div class="tri mid"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">Tech in the news - Business Strategy, Model and Processes</div>
+    <h1>AI Existential Risk</h1>
+    <h1>Anthropic IPO Strategy</h1>
+    <div class="author">Nelson Ferreira</div>
+  </section>
+
+  <!-- Slide 2 -->
+  <section class="slide">
+    <div class="tri small"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">Company</div>
+    <div class="company" style="font-size:7vh;margin-bottom:2vh">Anthropic</div>
+    <h2 style="margin-bottom:2vh;font-size:3.6vh">What is Anthropic?</h2>
+    <div class="grid">
+      <div class="card full">
+        <p>A company that sells AI products famously known for <strong>Claude</strong>. Claude is a suite of LLMs (Large Language Models) that can generate human-like text.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">How is revenue generated?</h3>
+        <p style="font-size:2.3vh">They charge users a certain amount of money for the volume of text processed (input) and generated (output). (token-based pricing)</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Who is their target market?</h3>
+        <p style="font-size:2.3vh">Enterprise businesses, software developers and knowledge-working institutions. Not focused on the broader public.</p>
+      </div>
+      <div class="card full">
+        <h3 style="margin-top:0">Competitors</h3>
+        <p style="font-size:2.3vh">OpenAI (GPT), Google DeepMind (Gemini), xAI (Grok), Meta AI (LLaMA/Muse) and other AI providers.</p>
+      </div>
+    </div>
+    <div class="source">Source: <a href="https://capital.com/en-eu/learn/ipo/anthropic-ipo">https://capital.com/en-eu/learn/ipo/anthropic-ipo</a></div>
+  </section>
+
+  <!-- Slide 3 -->
+  <section class="slide">
+    <div class="tri"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">The news</div>
+    <blockquote class="step">"Anthropic says its AI models pose "existential risk to humanity" in a leaked IPO filing report"</blockquote>
+    <p class="step" style="max-width:60vw">In the report, Anthropic dedicates dozens of pages to conclude that AI models could pose existential risk to humanity.</p>
+    <p class="step" style="max-width:60vw;margin-top:2vh">Saying highly autonomous systems could resist shutdowns, hide data or display self-preservation tendencies.</p>
+    <div class="source">Source: <a href="https://edition.cnn.com/2026/09/29/tech/anthropic-ipo-details-leak">https://edition.cnn.com/2026/09/29/tech/anthropic-ipo-details-leak</a></div>
+  </section>
+
+  <!-- Slide 4 -->
+  <section class="slide">
+    <div class="tri small"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">My view</div>
+    <h2 style="margin-bottom:2vh">What do I think?</h2>
+    <blockquote class="step" style="font-size:3.2vh">This is pure self-preservation. Meeting disclosure expectations, preparing investors for the risks of AI and reduce legal risks.</blockquote>
+    <div class="step">
+      <h3>I think it's a smart move to do this prior to the IPO.</h3>
+      <p style="max-width:65vw">It prevents future blacklash from investors and stakeholders. As well as reducing the risk of regulatory scrutiny.</p>
+    </div>
+    <div class="step">
+      <h3>Their competitors are also doing the same thing.</h3>
+      <p style="max-width:65vw">Sam Altman (OpenAI) and Elon Musk (xAI) have been alerting for the same thing.</p>
+    </div>
+    <div class="source">Sources:<br>
+      <a href="https://www.reuters.com/legal/litigation/openai-ipo-will-not-happen-2026-amid-ai-safety-fears-altman-says-2026-09-12/">https://www.reuters.com/legal/litigation/openai-ipo-will-not-happen-2026-amid-ai-safety-fears-altman-says-2026-09-12/</a><br>
+      <a href="https://www.theguardian.com/technology/2026/sep/13/openai-sam-altman-elon-musk-back-anthropic-calls-brakes-ai-development">https://www.theguardian.com/technology/2026/sep/13/openai-sam-altman-elon-musk-back-anthropic-calls-brakes-ai-development</a>
+    </div>
+  </section>
+
+  <!-- Slide 5 -->
+  <section class="slide">
+    <div class="tri"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">Strategic analysis</div>
+    <h2 style="margin-bottom:2vh">PESTEL + SWOT</h2>
+    <div class="grid">
+      <div class="card full">
+        <h3 style="margin-top:0">PESTEL | External context</h3>
+        <p style="font-size:2.2vh"><strong>Political / Legal:</strong> AI regulation, disclosure expectations and potential liability make risk communication strategically relevant.<br><strong>Social:</strong> Public concern about AI safety can affect trust among customers, employees and investors.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Strength</h3>
+        <p style="font-size:2.2vh">A frank discussion of risks may signal transparency and support stakeholder trust.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Weakness</h3>
+        <p style="font-size:2.2vh">Emphasizing severe risks could unsettle investors or raise questions about the company’s products.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Opportunity</h3>
+        <p style="font-size:2.2vh">Anthropic could differentiate itself through responsible-AI governance and clearer safety commitments.</p>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Threat</h3>
+        <p style="font-size:2.2vh">Regulatory action, reputational damage or competitors challenging its safety claims could follow.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Slide 6 -->
+  <section class="slide dark">
+    <div class="tri"></div><div class="tri small"></div><div class="tri mid"></div>
+
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="step">
+      <div class="big-question">Do you think this is a good strategy?</div>
+    </div>
+
+  </section>
+
+  <div class="counter" id="counter"></div>
+</div>
+
+<div class="nav">
+  <button id="prev">&larr; Prev</button>
+  <button id="next">Next &rarr;</button>
+  <button id="full">Fullscreen</button>
+</div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  let i = 0;
+  const cardsOf = s => [...s.querySelectorAll('.card, .step')];
+  function setCards(s, shown) {
+    cardsOf(s).forEach((c, k) => c.classList.toggle('hidden', k >= shown));
+  }
+  function next() {
+    const h = cardsOf(slides[i]).filter(c => c.classList.contains('hidden'));
+    if (h.length) h[0].classList.remove('hidden'); else show(i + 1);
+  }
+  function prev() {
+    const shown = cardsOf(slides[i]).filter(c => !c.classList.contains('hidden'));
+    if (shown.length) shown[shown.length - 1].classList.add('hidden'); else show(i - 1, true);
+  }
+  function show(n, back) {
+    const old = i;
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    if (i !== old) setCards(slides[i], back ? 99 : 0);
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    const c = document.getElementById('counter');
+    c.textContent = (i + 1) + ' / ' + slides.length;
+    c.style.color = slides[i].classList.contains('dark') ? '#fff' : '#101820';
+  }
+  document.getElementById('prev').onclick = prev;
+  document.getElementById('next').onclick = next;
+  document.getElementById('full').onclick = () => document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight', 'PageDown', ' ', 'Enter'].includes(e.key)) next();
+    if (['ArrowLeft', 'PageUp', 'Backspace'].includes(e.key)) prev();
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+    if (e.key === 'f') document.getElementById('full').click();
+  });
+  slides.forEach(s => setCards(s, 0));
+  show(0);
+</script>
+</body>
+</html>
