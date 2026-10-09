@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IQSight - Strategic Initiative Customer Delight</title>
+<style>
+  :root { --blue:#192AEA; --black:#101820; --white:#FFFFFF; --grey:#EEF0F6; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html, body { height:100%; background:var(--black); font-family:"Montserrat","Segoe UI",Helvetica,Arial,sans-serif; color:var(--black); overflow:hidden; }
+  .deck { position:relative; width:100vw; height:100vh; }
+  .slide { position:absolute; inset:0; display:none; padding:15vh 8vw 9vh; background:var(--white); flex-direction:column; justify-content:center; overflow:hidden; }
+  .slide.active { display:flex; animation:fade .4s ease; }
+  @keyframes fade { from { opacity:0; transform:translateX(20px); } to { opacity:1; transform:none; } }
+
+  .tri { position:absolute; right:0; bottom:0; width:28vw; height:28vw; background:var(--blue); clip-path:polygon(100% 0,100% 100%,0 100%); opacity:.95; }
+  .tri.small { width:18vw; height:18vw; background:var(--black); }
+  .tri.mid { width:10vw; height:10vw; background:var(--white); }
+  .dark { background:var(--blue); color:var(--white); }
+  .dark .tri { background:var(--black); }
+  .dark .tri.small { background:var(--white); opacity:.9; }
+  .dark .tri.mid { background:var(--blue); }
+
+  .logo-box { position:absolute; top:3vh; left:3vw; background:var(--white); padding:1vh 1.5vw; }
+  .logo-box img { height:7vh; display:block; }
+  .kicker { text-transform:uppercase; letter-spacing:.25em; font-weight:700; font-size:1.6vh; color:var(--blue); margin-bottom:1.5vh; }
+  .dark .kicker { color:var(--white); opacity:.8; }
+  h1 { font-size:8vh; line-height:1.1; font-weight:800; max-width:70vw; text-transform:uppercase; }
+  h2 { font-size:5vh; font-weight:800; color:var(--blue); margin-bottom:3vh; text-transform:uppercase; }
+  h3 { font-size:2.4vh; font-weight:700; color:var(--blue); text-transform:uppercase; letter-spacing:.06em; margin-bottom:.6vh; }
+  p { font-size:2.6vh; line-height:1.45; }
+  .sub { font-size:3vh; font-weight:600; margin-top:3vh; border-left:.8vh solid var(--white); padding-left:1.5vw; }
+  .big { font-size:6.5vh; font-weight:800; line-height:1.15; text-transform:uppercase; max-width:75vw; }
+  .big em { font-style:normal; color:var(--blue); }
+  .dark .big em { color:var(--black); }
+  blockquote { font-size:3.4vh; font-weight:700; line-height:1.35; background:var(--blue); color:var(--white); padding:3.5vh 3vw; max-width:70vw; margin-top:2vh; }
+
+  .grid { display:grid; gap:2.5vh 2.5vw; max-width:84vw; }
+  .g3 { grid-template-columns:repeat(3,1fr); }
+  .g2 { grid-template-columns:repeat(2,1fr); }
+  .g5 { grid-template-columns:repeat(5,1fr); }
+  .card { border-left:.8vh solid var(--blue); padding:.5vh 0 .5vh 1.2vw; }
+  .card p { font-size:2.2vh; }
+  .card .tag { display:inline-block; margin-top:.8vh; font-size:1.7vh; font-weight:800; letter-spacing:.1em; padding:.3vh .8vw; background:var(--black); color:var(--white); }
+  .card .tag.hi { background:var(--blue); }
+  .tile { background:var(--grey); padding:2.5vh 1.6vw; border-top:.8vh solid var(--blue); }
+  .tile p { font-size:2.2vh; }
+  .tile.dk { background:var(--blue); color:var(--white); border-color:var(--black); }
+  .tile.dk h3 { color:var(--white); }
+  .step, .card, .tile { transition:opacity .4s ease, transform .4s ease; }
+  .hidden { opacity:0; transform:translateY(2vh); }
+
+  /* BCG */
+  .bcg { display:grid; grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; gap:.6vh; width:44vw; height:46vh; }
+  .bcg div { background:var(--grey); padding:1.2vh 1vw; font-size:1.6vh; font-weight:800; letter-spacing:.1em; text-transform:uppercase; position:relative; }
+  .bcg div.star { background:var(--blue); color:var(--white); }
+  .bcg b { position:absolute; background:var(--black); color:var(--white); border-radius:50%; width:9vh; height:9vh; display:flex; align-items:center; justify-content:center; text-align:center; font-size:1.5vh; line-height:1.2; padding:.6vh; letter-spacing:0; text-transform:none; }
+  .bcg .star b { background:var(--white); color:var(--blue); }
+  .row { display:flex; gap:3vw; align-items:center; }
+  .axis { font-size:1.5vh; opacity:.6; margin-top:1vh; text-transform:uppercase; letter-spacing:.1em; }
+
+  /* 7S */
+  .s7 { display:grid; grid-template-columns:1fr 1.1fr 1fr; gap:2vh 2vw; max-width:84vw; align-items:stretch; }
+  .s7 .core { grid-row:1 / span 3; grid-column:2; background:var(--blue); color:var(--white); display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:3vh 1.5vw; }
+  .s7 .core h3 { color:var(--white); font-size:3vh; }
+  .s7 .core p { font-size:2.2vh; }
+
+  /* Business Model Canvas */
+  .bmc { display:grid; width:84vw; height:50vh; gap:.8vh .6vw; grid-template-columns:repeat(5,1fr); grid-template-rows:1fr 1fr .8fr;
+         grid-template-areas:"kp ka vp cr cs" "kp kr vp ch cs" "co co re re re"; }
+  .cell { background:var(--grey); border-top:.6vh solid var(--blue); padding:1vh .8vw; overflow:hidden; }
+  .cell h3 { font-size:1.7vh; margin-bottom:.5vh; }
+  .cell ul { list-style:none; }
+  .cell li { font-size:1.6vh; line-height:1.3; padding-left:.9vw; position:relative; margin-bottom:.3vh; }
+  .cell li::before { content:""; position:absolute; left:0; top:.7vh; width:.4vw; height:.4vw; background:var(--blue); }
+  .cell.vp { background:var(--blue); color:var(--white); border-color:var(--black); }
+  .cell.vp h3 { color:var(--white); }
+  .cell.vp li::before { background:var(--white); }
+
+  .notes { display:none; }
+  #notebox { display:none; position:fixed; left:0; right:0; bottom:0; background:var(--black); color:var(--white); font-size:2vh; line-height:1.4; padding:2vh 4vw 7vh; z-index:20; }
+  #notebox.on { display:block; }
+  .src { font-size:1.4vh; opacity:.65; margin-top:2vh; max-width:70vw; }
+  .chain { display:flex; align-items:stretch; gap:1vw; max-width:84vw; }
+  .chain .tile { flex:1; } .chain .arrow { align-self:center; font-size:4vh; font-weight:800; color:var(--blue); }
+  .cell.chg { box-shadow:inset 0 0 0 .35vh var(--blue); }
+  .cell.vp.chg { box-shadow:inset 0 0 0 .35vh var(--white); }
+  .legend { font-size:1.6vh; margin-top:1vh; opacity:.8; }
+  .footer { position:absolute; bottom:3vh; left:4vw; font-size:1.5vh; letter-spacing:.15em; text-transform:uppercase; opacity:.6; z-index:2; }
+  .counter { position:absolute; bottom:3vh; right:3vw; font-size:1.8vh; font-weight:700; z-index:2; }
+  .nav { position:fixed; bottom:2vh; left:50%; transform:translateX(-50%); display:flex; gap:1vw; z-index:10; }
+  .nav button { background:var(--black); color:var(--white); border:2px solid var(--white); padding:.6vh 1.2vw; font-weight:700; cursor:pointer; font-size:1.6vh; }
+  .nav button:hover { background:var(--blue); }
+  .slide > *:not(.tri):not(.logo-box) { position:relative; z-index:1; }
+  .slide > .tri, .slide > .logo-box { z-index:0; }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- 1 Title -->
+  <section class="slide dark active">
+    <div class="tri"></div><div class="tri small"></div><div class="tri mid"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">Business Strategy, Model and Processes - Group 1</div>
+    <h1>IQSight</h1>
+    <h1>Customer Delight</h1>
+    <div class="sub">Formerly Bosch Video Systems</div>
+    <aside class="notes">(30s) Introduce the team and the question: how should IQSight use Customer Delight to compete after leaving Bosch? Roadmap: outside-in (PESTEL, Five Forces), inside-out (7S, BCG), business model, then recommendations.</aside>
+  </section>
+
+  <!-- 2 Company -->
+  <section class="slide">
+    <div class="tri small"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">The company</div>
+    <h2>Who is IQSight?</h2>
+    <div class="grid g3">
+      <div class="card step"><h3>What</h3><p>Video surveillance hardware, software and AI analytics.</p></div>
+      <div class="card step"><h3>Origin</h3><p>Carved out of Bosch and sold to Triton Partners in June 2025.</p></div>
+      <div class="card step"><h3>Promise</h3><p>See clearly, understand more, act with confidence.</p></div>
+    </div>
+    <p class="step" style="margin-top:3vh;font-weight:700">So what: a new owner wants growth and speed. The Bosch-era way of working has to change.</p>
+    <div class="src">Source: team analysis based on Bosch and Triton Partners announcements (2025).</div>
+    <aside class="notes">(45s) IQSight is the former Bosch Video Systems, sold to Triton Partners in June 2025. A private-equity owner expects growth and faster decisions, which sets up the problem on the next slide.</aside>
+  </section>
+
+  <!-- 3 Initiative -->
+  <section class="slide dark">
+    <div class="tri"></div><div class="tri small"></div><div class="tri mid"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">The initiative</div>
+    <div class="step"><div class="big" style="font-size:4.5vh;margin-bottom:3vh">Problem: <em>over-engineering</em> and complexity</div></div>
+    <div class="step"><div class="big">Solution: <em>Customer Delight</em></div></div>
+    <div class="step"><p style="margin-top:3vh;font-size:3vh">Simpler. Faster. More agile.</p></div>
+    <div class="step"><p style="margin-top:2vh;font-size:2.4vh">Why it works: easy products win tenders, ease partner work and fit a software-led model.</p></div>
+    <aside class="notes">(45s) Argue the problem: products and processes are over-engineered, so they are slow to ship and hard to install. Alternatives such as a price war lose against Asian makers. Customer Delight competes on simplicity instead. The next slides test this with the models.</aside>
+  </section>
+
+  <!-- 4 PESTEL -->
+  <section class="slide">
+    <div class="tri small"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">Strategy model 1</div>
+    <h2>PESTEL</h2>
+    <div class="grid g3">
+      <div class="card step"><h3>Political</h3><p>Governments restrict Chinese vendors, so trusted Western brands gain tenders.</p><span class="tag hi">HIGH</span></div>
+      <div class="card step"><h3>Economic</h3><p>Asian price pressure squeezes hardware margins; buyers move to subscriptions.</p><span class="tag hi">HIGH</span></div>
+      <div class="card step"><h3>Social</h3><p>Safety demand grows, but so do privacy concerns about video analytics.</p><span class="tag">MEDIUM</span></div>
+      <div class="card step"><h3>Technological</h3><p>Edge AI and cloud video turn cameras into software platforms.</p><span class="tag hi">HIGH</span></div>
+      <div class="card step"><h3>Environmental</h3><p>Energy-efficiency and e-waste rules favour durable, long-warranty devices.</p><span class="tag">LOW</span></div>
+      <div class="card step"><h3>Legal</h3><p>GDPR, EU AI Act, NIS2 and CRA raise compliance costs but reward secure vendors.</p><span class="tag">MEDIUM</span></div>
+    </div>
+    <p class="step" style="margin-top:2.5vh;font-weight:700">So what: Politics, Economics and Technology matter most. Hardware loses value, trust and software gain it.</p>
+    <div class="src">Impact rating: team judgement. Sources: EU AI Act and NIS2 texts; public trusted-vendor rules (e.g. US NDAA s.889).</div>
+    <aside class="notes">(75s) Do not read every box. Focus on the three high-impact factors. Political: trusted-vendor rules open doors. Economic: hardware prices fall. Technological: value moves to analytics and cloud. Legal and social factors reward a vendor that is secure and simple.</aside>
+  </section>
+
+  <!-- 5 Porter -->
+  <section class="slide">
+    <div class="tri"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">Strategy model 2</div>
+    <h2>Porter's Five Forces</h2>
+    <div class="grid g3">
+      <div class="card step"><h3>Rivalry</h3><p>Axis, Hanwha, Hikvision and Genetec compete on price and features.</p><span class="tag hi">HIGH</span></div>
+      <div class="card step"><h3>Buyer power</h3><p>Tenders and integrators compare offers and switch easily (open standards).</p><span class="tag hi">HIGH</span></div>
+      <div class="card step"><h3>New entrants</h3><p>Asian OEMs and AI start-ups enter, but scale and trust are barriers.</p><span class="tag">MEDIUM</span></div>
+      <div class="card step"><h3>Suppliers</h3><p>Few chip and sensor vendors set terms.</p><span class="tag">MEDIUM</span></div>
+      <div class="card step"><h3>Substitutes</h3><p>Radar, access control and cloud services replace some cameras.</p><span class="tag">MEDIUM</span></div>
+      <div class="tile dk step"><h3>Verdict</h3><p>Industry attractiveness: low to medium. Price alone cannot win; ease of use can.</p></div>
+    </div>
+    <div class="src">Ratings: team judgement from the competitive landscape; competitor names are indicative.</div>
+    <aside class="notes">(75s) Two forces are high: rivalry and buyers. Buyers can compare and switch, so we cannot rely on price or specifications. Substitutes are medium, not low, because cloud and sensor-based security can replace some cameras. Conclusion: differentiate on simplicity and partner experience.</aside>
+  </section>
+
+  <!-- 6 7S -->
+  <section class="slide">
+    <div class="tri small"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">Strategy model 3</div>
+    <h2>McKinsey 7S</h2>
+    <div class="s7">
+      <div class="card step"><h3>Strategy</h3><p>Customer Delight, software and AI.</p></div>
+      <div class="core step"><h3>Shared values</h3><p>Intelligence-first. Quality, security, delight.</p><p style="margin-top:2vh;font-weight:700">Gap: Bosch-era complexity remains.</p></div>
+      <div class="card step"><h3>Style</h3><p>From engineering-led to customer-led.</p></div>
+      <div class="card step"><h3>Structure</h3><p>Standalone, fewer decision layers.</p></div>
+      <div class="card step"><h3>Staff</h3><p>Keep talent; hire cloud and AI.</p></div>
+      <div class="card step"><h3>Systems</h3><p>New IT, partner portal, simple quoting.</p></div>
+      <div class="card step"><h3>Skills</h3><p>Strong hardware; gap in SaaS.</p></div>
+    </div>
+    <p class="step" style="margin-top:2.5vh;font-weight:700">Hard S's (strategy, structure, systems) already point to Customer Delight. Soft S's (style, staff, skills) still carry Bosch-era habits. Fix the soft S's first.</p>
+    <div class="src">Source: team analysis of the Bosch carve-out; no internal data available.</div>
+    <aside class="notes">(60s) The shared values are right, but the gap is between hard and soft elements. Structure and systems can be changed by management decision. Style, staff and skills take longer and decide whether Customer Delight is real.</aside>
+  </section>
+
+  <!-- 7 BCG -->
+  <section class="slide">
+    <div class="tri"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">Strategy model 4</div>
+    <h2 style="margin-bottom:2vh">BCG Growth-Share Matrix</h2>
+    <div class="row">
+      <div>
+        <div class="bcg step">
+          <div>Question marks<b style="right:2vw;bottom:1.5vh">Cloud / VSaaS</b></div>
+          <div class="star">Stars<b style="left:2vw;bottom:1.5vh">AI analytics</b></div>
+          <div>Dogs<b style="right:2vw;bottom:1.5vh">Legacy analog</b></div>
+          <div>Cash cows<b style="left:1vw;bottom:1.5vh">Cameras</b><b style="right:1vw;bottom:3vh">VMS</b></div>
+        </div>
+        <div class="axis">Market share: low &larr; &rarr; high &nbsp;|&nbsp; Growth: top = high</div>
+      </div>
+      <div style="max-width:30vw">
+        <div class="step"><h3>Invest</h3><p style="font-size:2.3vh">AI analytics</p></div>
+        <div class="step" style="margin-top:2vh"><h3>Harvest</h3><p style="font-size:2.3vh">Cameras and VMS fund the shift</p></div>
+        <div class="step" style="margin-top:2vh"><h3>Build</h3><p style="font-size:2.3vh">Cloud with partners</p></div>
+      </div>
+    </div>
+    <div class="src">Positions are team estimates, not audited figures. Sources to validate: Omdia and Memoori video-surveillance market reports.</div>
+    <aside class="notes">(60s) State clearly that positions are our estimates. Cameras and VMS generate the cash. AI analytics is the star to fund. Cloud is a question mark: high growth, low share, so build it with partners. Legacy analog is a dog: stop investing. Cash from hardware must pay for the move to software.</aside>
+  </section>
+
+  <!-- 8 Canvas -->
+  <section class="slide">
+    <div class="tri small"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">Business model</div>
+    <h2 style="margin-bottom:1vh">Business Model Canvas</h2>
+    <div class="legend">Outlined blocks change with Customer Delight.</div>
+    <div class="bmc">
+      <div class="cell" style="grid-area:kp"><h3>Key partners</h3><ul><li>Chip and sensor suppliers</li><li>VMS and cloud providers</li><li>Integrators, installers, distributors</li><li>Triton Partners (owner)</li></ul></div>
+      <div class="cell chg" style="grid-area:ka"><h3>Key activities</h3><ul><li>Camera and software R&amp;D</li><li>AI analytics development</li><li>Manufacturing and quality</li><li>Partner training and support</li></ul></div>
+      <div class="cell" style="grid-area:kr"><h3>Key resources</h3><ul><li>Engineering and optics know-how</li><li>AI and analytics IP</li><li>Global partner network</li><li>Brand and Bosch heritage</li></ul></div>
+      <div class="cell vp chg" style="grid-area:vp"><h3>Value propositions</h3><ul><li>Easy-to-install, simple products</li><li>AI-powered video analytics</li><li>On-premise, hybrid or cloud</li><li>Security and data privacy</li><li>5-year warranty</li></ul></div>
+      <div class="cell chg" style="grid-area:cr"><h3>Customer relationships</h3><ul><li>5-year warranty</li><li>Partner support and benefits</li><li>Customer-success team</li></ul></div>
+      <div class="cell" style="grid-area:ch"><h3>Channels</h3><ul><li>B2B partners and distributors</li><li>Partner portal</li><li>Trade shows and web</li></ul></div>
+      <div class="cell" style="grid-area:cs"><h3>Customer segments</h3><ul><li>Retail</li><li>Airports and transport</li><li>Governments and cities</li><li>Critical infrastructure</li></ul></div>
+      <div class="cell" style="grid-area:co"><h3>Cost structure</h3><ul><li>R&amp;D and cloud operations</li><li>Components and manufacturing</li><li>Sales, support and warranty</li></ul></div>
+      <div class="cell chg" style="grid-area:re"><h3>Revenue streams</h3><ul><li>Hardware sales (one-off)</li><li>Software licences and subscriptions</li><li>Cloud VSaaS, support and services</li></ul></div>
+    </div>
+    <aside class="notes">(60s) Outlined blocks change with Customer Delight. Value: simplicity and ease of installation. Activities: simplify product design. Relationships: customer success. Revenue: shift from one-off hardware to subscriptions. Segments and channels stay the same.</aside>
+  </section>
+
+  <!-- 9 Synthesis -->
+  <section class="slide">
+    <div class="tri small"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">Synthesis</div>
+    <h2>What the models tell us together</h2>
+    <div class="chain">
+      <div class="tile step"><h3>Outside</h3><p>PESTEL and Five Forces: hardware price war, buyers hold power, trust and software gain value.</p></div>
+      <div class="arrow">&rarr;</div>
+      <div class="tile step"><h3>Inside</h3><p>7S and BCG: strong hardware cash cows, but soft S's and SaaS skills lag.</p></div>
+      <div class="arrow">&rarr;</div>
+      <div class="tile step"><h3>Business model</h3><p>Canvas: simpler value, customer success, subscription revenue.</p></div>
+      <div class="arrow">&rarr;</div>
+      <div class="tile dk step"><h3>Answer</h3><p>Customer Delight: win on simplicity and software, not on price.</p></div>
+    </div>
+    <aside class="notes">(45s) Link the models. External: price is a losing game. Internal: we have cash from hardware but lack software and soft skills. Business model: change value, relationships and revenue. All four models point to the same answer: Customer Delight.</aside>
+  </section>
+
+  <!-- 10 Recommendations -->
+  <section class="slide">
+    <div class="tri"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">Recommendation</div>
+    <h2>Roadmap and KPIs</h2>
+    <div class="grid g3">
+      <div class="card step"><h3>0-6 months: Simplify</h3><p>Cut product variants, simplify quoting and installation, launch the partner portal.</p><span class="tag">KPI: install time, quote time</span></div>
+      <div class="card step"><h3>6-18 months: Build</h3><p>Hire cloud and AI talent, launch cloud VSaaS with partners, set up customer success.</p><span class="tag">KPI: NPS, partner satisfaction</span></div>
+      <div class="card step"><h3>18+ months: Scale</h3><p>Shift mix to subscriptions, grow in trusted-vendor tenders, phase out legacy analog.</p><span class="tag">KPI: recurring revenue share</span></div>
+    </div>
+    <div class="src">KPI targets to be set with management; baselines are not available to the team.</div>
+    <aside class="notes">(60s) Three phases in order of risk. First fix what is cheap and visible to customers. Then build capabilities. Then scale subscriptions. Each phase has one KPI so the board can see progress.</aside>
+  </section>
+
+  <!-- 11 Risks -->
+  <section class="slide">
+    <div class="tri small"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="kicker">Risks</div>
+    <h2>What could go wrong</h2>
+    <div class="grid g3">
+      <div class="card step"><h3>Talent loss</h3><p>Engineers leave during the change.</p><span class="tag hi">Retention plan, clear roles</span></div>
+      <div class="card step"><h3>Cash squeeze</h3><p>Hardware margins fall before software grows.</p><span class="tag hi">Protect cash cows, stage investments</span></div>
+      <div class="card step"><h3>Partner pushback</h3><p>Integrators resist new cloud models.</p><span class="tag hi">Partner benefits, co-selling</span></div>
+    </div>
+    <aside class="notes">(30s) Be honest about risks. Each has a mitigation. Then move to the close.</aside>
+  </section>
+
+  <!-- 12 Questions and references -->
+  <section class="slide dark">
+    <div class="tri"></div><div class="tri small"></div><div class="tri mid"></div>
+    <div class="logo-box"><img src="assets/pbs-logo.svg" alt="Porto Business School"></div>
+    <div class="big" style="font-size:8vh">Questions?</div>
+    <div class="sub">Group 1</div>
+    <div class="src" style="max-width:60vw;margin-top:4vh">References: Bosch and Triton Partners announcement (2025); Regulation (EU) 2024/1689 (AI Act); Directive (EU) 2022/2555 (NIS2); Porter (1979), How competitive forces shape strategy; Peters and Waterman (1982), In Search of Excellence (7S); Henderson (1970), BCG growth-share matrix; Osterwalder and Pigneur (2010), Business Model Generation.</div>
+    <aside class="notes">(30s) Thank the audience and invite questions.</aside>
+  </section>
+
+  <div class="counter" id="counter"></div>
+  <div id="notebox"></div>
+</div>
+
+<div class="nav">
+  <button id="prev">&larr; Prev</button>
+  <button id="next">Next &rarr;</button>
+  <button id="full">Fullscreen</button>
+</div>
+
+<script>
+  const slides = [...document.querySelectorAll('.slide')];
+  let i = 0;
+  const cardsOf = s => [...s.querySelectorAll('.card, .step, .tile')].filter(e => !e.closest('.step') || e.classList.contains('step'));
+  function setCards(s, shown) { cardsOf(s).forEach((c, k) => c.classList.toggle('hidden', k >= shown)); }
+  function next() {
+    const h = cardsOf(slides[i]).filter(c => c.classList.contains('hidden'));
+    if (h.length) h[0].classList.remove('hidden'); else show(i + 1);
+  }
+  function prev() {
+    const shown = cardsOf(slides[i]).filter(c => !c.classList.contains('hidden'));
+    if (shown.length) shown[shown.length - 1].classList.add('hidden'); else show(i - 1, true);
+  }
+  function show(n, back) {
+    const old = i;
+    i = Math.max(0, Math.min(slides.length - 1, n));
+    if (i !== old) setCards(slides[i], back ? 99 : 0);
+    slides.forEach((s, k) => s.classList.toggle('active', k === i));
+    const c = document.getElementById('counter');
+    c.textContent = (i + 1) + ' / ' + slides.length;
+    c.style.color = slides[i].classList.contains('dark') ? '#fff' : '#101820';
+    updateNotes();
+  }
+  function updateNotes() {
+    const a = slides[i].querySelector('.notes');
+    document.getElementById('notebox').textContent = a ? a.textContent : '';
+  }
+  function toggleNotes() { document.getElementById('notebox').classList.toggle('on'); }
+  document.getElementById('prev').onclick = prev;
+  document.getElementById('next').onclick = next;
+  document.getElementById('full').onclick = () => document.documentElement.requestFullscreen && document.documentElement.requestFullscreen();
+  document.addEventListener('keydown', e => {
+    if (['ArrowRight','PageDown',' ','Enter'].includes(e.key)) next();
+    if (['ArrowLeft','PageUp','Backspace'].includes(e.key)) prev();
+    if (e.key === 'Home') show(0);
+    if (e.key === 'End') show(slides.length - 1);
+    if (e.key === 'f') document.getElementById('full').click();
+    if (e.key === 'n') toggleNotes();
+  });
+  slides.forEach(s => setCards(s, 0));
+  show(0);
+</script>
+</body>
+</html>
